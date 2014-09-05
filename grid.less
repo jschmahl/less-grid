@@ -1,0 +1,94 @@
+/**
+ * Grid system
+
+ *
+ * @example Static width for 12 columns
+ *  .column(12);
+ *
+ * @example Fluid width for 12 columns
+ *  .column-fluid(12);
+ *
+ * @example Nested fluid column
+ *  .column-fluid(12, 0, 16); // while 16 is number of parent's column width
+ */
+
+// Default Configuration
+@grid-column-width: 30px;
+@grid-column-gutter: 30px;
+@grid-columns: 24;
+
+// Full grid width
+@grid-width: ((@grid-column-width + @grid-column-gutter) * @grid-columns) * 1px;
+
+/*
+ * Static column mixin
+ *
+ * @param columns {int} Column count of element
+ * @param vertical-margin {top|bottom|both|0} Position where to insert margin
+ */
+.column (@columns, @vertical-margin: 0) {
+    float: left;
+    display: inline;
+
+    width: round((@grid-column-width * @columns) + (@grid-column-gutter * (@columns - 1)) * 1px, 2);
+    margin-left: round(@grid-column-gutter / 2, 2);
+    margin-right: round(@grid-column-gutter / 2, 2);
+}
+
+/*
+ * Columns with margin corresponding to gutter
+ */
+.column (@columns, @vertical-margin) when (@vertical-margin = top) {
+    margin-top: @grid-column-gutter;
+}
+.column (@columns, @vertical-margin) when (@vertical-margin = bottom) {
+    margin-bottom: @grid-column-gutter;
+}
+.column (@columns, @vertical-margin) when (@vertical-margin = both) {
+    margin-top: @grid-column-gutter / 2;
+    margin-bottom: @grid-column-gutter / 2;
+}
+
+/*
+ * Fluid columns
+ *
+ * @param columns {int} Column count of element
+ * @param vertical-margin {top|bottom|both|0} Position where to insert margin
+ * @param parent-columns {int} Column count of parent element
+ */
+.column-fluid (@columns, @vertical-margin: 0, @parent-columns: @grid-columns) {
+    @margin: round(percentage(@grid-column-gutter / ((@grid-column-width + @grid-column-gutter) * @parent-columns)), 2);
+
+    .column (@columns, @vertical-margin);
+
+    width: round(percentage((@columns / @parent-columns)) - @margin, 2);
+    margin-left: @margin / 2;
+    margin-right: @margin / 2;
+}
+
+/*
+ * Wrapper for nested static columns
+ *
+ * @param columns {int} Column count of element
+ * @param vertical-margin {top|bottom|both|0} Position where to insert margin
+ */
+.column-wrap (@columns, @vertical-margin: 0) {
+    .column (@columns, @vertical-margin);
+
+    width: ((@grid-column-width + @grid-column-gutter) * @columns) * 1px;
+    margin: 0;
+}
+
+/*
+ * Wrapper for nested fluid columns
+ *
+ * @param columns {int} Column count of element
+ * @param vertical-margin {top|bottom|both|0} Position where to insert margin
+ */
+.column-wrap-fluid (@columns, @vertical-margin: 0) {
+    .column(@columns, @vertical-margin);
+
+    float: left;
+    width: percentage(@columns / @grid-columns);
+    margin: 0;
+}
